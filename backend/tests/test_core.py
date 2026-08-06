@@ -56,17 +56,59 @@ def test_scorer_human_classification(nlp):
     assert res.verdict in ["Low Suspicion", "Moderate Suspicion"], f"Expected Human essay to be Low/Moderate Suspicion, got {res.verdict} with score {res.composite_score}"
     assert res.composite_score < 0.60, "Composite score should be < 0.60 for authentic human text."
 
-def test_burstiness_std_formula(nlp):
-    # Burstiness should be the standard deviation of sentence lengths.
-    # Text with exactly equal sentence lengths should have burstiness = 0.
-    text = "This is a short sentence. Here is another one now."
-    doc = nlp(text)
-    
+def test_burstiness_content_word_length(nlp):
+    # Burstiness now measures mean content-word length (non-stop-word tokens).
+    # AI uses long Latinate nominalizations -> higher score.
+    # Human uses short, concrete words -> lower score.
+    ai_text = "The implementation demonstrates extraordinary commitment to collaborative engagement and professional aspirations."
+    human_text = "She kept a tin of old buttons on the kitchen shelf."
+
+    doc_ai = nlp(ai_text)
+    doc_human = nlp(human_text)
+
+    signals_ai = extract_all(doc_ai)
+    signals_human = extract_all(doc_human)
+
+    assert signals_ai['burstiness'] > signals_human['burstiness'], (
+        f"AI text should have higher content-word length than human text. "
+        f"AI={signals_ai['burstiness']:.4f}, Human={signals_human['burstiness']:.4f}"
+    )
+    # AI text with long nominalizations should be well above the human baseline (6.33)
+    assert signals_ai['burstiness'] > 7.0, (
+        f"AI nominalization text should score > 7.0, got {signals_ai['burstiness']:.4f}"
+    )
+
+
+def test_baseline_text_is_low_suspicion(nlp):
+    # Bug 1 fix: a text scoring at human baseline (z=0) should be "Low Suspicion",
+    # not "Moderate Suspicion" (the old sigmoid mapped z=0 -> 0.5).
+    from core.baselines import HUMAN_BASELINES
+    # Construct raw signals at exactly the baseline means
+    baseline_signals = {key: mean for key, (mean, _) in HUMAN_BASELINES.items()}
+    res = score(baseline_signals)
+    assert res.verdict == "Low Suspicion", (
+        f"Text at exact human baseline should be Low Suspicion, "
+        f"got {res.verdict} (score={res.composite_score})"
+    )
+    assert res.composite_score < 0.30, (
+        f"Baseline composite should be < 0.30, got {res.composite_score}"
+    )
+
+
+def test_sopd_short_text_dampened(nlp):
+    # Bug 4 fix: short texts (few sentences) should NOT get extreme SOPD z-scores.
+    # A 3-sentence text with all-unique bigrams should not yield a huge negative z.
+    short_text = "Running fast feels amazing. Quietly she waited. Why did he leave?"
+    doc = nlp(short_text)
+
     signals = extract_all(doc)
-    # Sentence 1: 5 words (not counting space). Sentence 2: 5 words.
-    # Wait, let's check tokens: ["This", "is", "a", "short", "sentence", "."] -> length 6
-    # ["Here", "is", "another", "one", "now", "."] -> length 6
-    # Standard deviation should be 0.
-    assert signals['burstiness'] == 0.0, f"Expected burstiness to be 0 for uniform sentences, got {signals['burstiness']}"
+    from core.scorer import _compute_z
+    z = _compute_z("sopd", signals["sopd"])
+    # Without dampening, 3 unique bigrams / 3 = 1.0, z = -(1.0-0.70)/0.12 = -2.5
+    # With dampening: raw ≈ 0.70 + (1.0-0.70)*0.3 = 0.79, z = -(0.79-0.70)/0.12 ≈ -0.75
+    assert abs(z) < 1.5, (
+        f"SOPD z-score for a 3-sentence text should be dampened (|z| < 1.5), "
+        f"got z={z:.2f} (raw={signals['sopd']:.4f})"
+    )
 
 

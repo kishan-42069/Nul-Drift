@@ -1,0 +1,2 @@
+backend/data/*.csv filter=lfs diff=lfs merge=lfs -text
+backend/data/*.json filter=lfs diff=lfs merge=lfs -text

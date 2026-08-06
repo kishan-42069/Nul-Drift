@@ -50,8 +50,8 @@ SIGNAL_EXPLANATIONS: dict[str, dict[str, str]] = {
     },
     "burstiness": {
         "name": "Burstiness Index",
-        "human_desc": "High sentence length variation — mixes short and long sentences.",
-        "ai_desc": "Monotonic sentence structure — low variation in sentence lengths across paragraphs.",
+        "human_desc": "Short, concrete vocabulary — uses everyday words and vivid specifics.",
+        "ai_desc": "Long, Latinate content words — nominalizations like ‘engagement’, ‘aspirations’, ‘endeavors’.",
         "key": "burstiness",
         "weight_label": "Primary",
     },
@@ -160,8 +160,8 @@ def score(raw_signals: dict[str, float], word_count: int = 0, sentence_count: in
         exp = SIGNAL_EXPLANATIONS.get(key, {})
         mean, std = HUMAN_BASELINES.get(key, (0.0, 1.0))
 
-        # Signal is "suspicious" if its z-score (AI-direction) > 0.5
-        is_suspicious = z > 0.5
+        # Signal is "suspicious" if z exceeds the Moderate boundary (z ≈ 0.38)
+        is_suspicious = z > 0.38
 
         explanation = exp.get("ai_desc", "") if is_suspicious else exp.get("human_desc", "")
 
@@ -184,8 +184,10 @@ def score(raw_signals: dict[str, float], word_count: int = 0, sentence_count: in
         weight_sum += weight
 
     weighted_mean_z = weighted_z_sum / weight_sum if weight_sum > 0 else 0.0
-    # Scale the sigmoid: multiply by 0.8 so the inflection sits near z≈1.5
-    composite = _sigmoid(weighted_mean_z * 0.8)
+    # Shifted sigmoid (calibrated from dataset):
+    # z=0 (baseline) -> ~0.2994 (Low Suspicion),
+    # z~0.0 -> 0.30 (Moderate threshold), z~0.48 -> 0.60 (High threshold)
+    composite = _sigmoid(2.6 * weighted_mean_z - 0.85)
 
     # Determine verdict
     if composite < VERDICT_THRESHOLDS["low"]:

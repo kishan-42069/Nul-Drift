@@ -27,6 +27,8 @@ import string
 from collections import Counter
 from typing import List
 
+from .baselines import HUMAN_BASELINES
+
 import numpy as np
 import spacy
 
@@ -99,23 +101,27 @@ def syntactic_tree_depth_variance(doc: spacy.tokens.Doc) -> float:
     for sent in sents:
         root = sent.root
         depths.append(_max_depth(root))
-    return float(np.var(depths))
+    return float(np.std(depths))
 
 
 def burstiness_index(doc: spacy.tokens.Doc) -> float:
     """
-    Standard deviation of sentence token lengths (Burstiness).
+    Mean content-word length — average character length of non-stop-word tokens.
 
-    AI text is monotonic and uniform → low burstiness (low std).
-    Human text mixes short punchy sentences with long complex clauses → high burstiness (high std).
+    AI overuses long Latinate nominalizations ('engagement', 'aspirations',
+    'endeavors') → high mean content-word length.
+    Human writers use short, concrete, specific words → low mean content-word length.
 
-    Returns: float (≥ 0).
+    This is orthogonal to MATTR: MATTR measures type diversity; this measures
+    whether vocabulary skews toward long abstract nouns over short vivid ones.
+
+    Returns: float (> 0), typically 5.5–8.0 for prose.
     """
-    sents = _sentences(doc)
-    if len(sents) < 2:
+    tokens = [t.text.lower() for t in doc
+              if t.is_alpha and not t.is_stop and not t.is_space]
+    if not tokens:
         return 0.0
-    lengths = [len([t for t in s if not t.is_space]) for s in sents]
-    return float(np.std(lengths))
+    return float(np.mean([len(t) for t in tokens]))
 
 
 # ===========================================================================
@@ -191,7 +197,17 @@ def sentence_opening_pos_diversity(doc: spacy.tokens.Doc) -> float:
             bigrams.append((meaningful_tokens[0].pos_, "END"))
     if not bigrams:
         return 0.0
-    return len(set(bigrams)) / len(bigrams)
+    raw = len(set(bigrams)) / len(bigrams)
+
+    # Dampen for small sample sizes: TTR ≈ 1.0 for very few sentences
+    # is uninformative, so shrink toward the baseline mean.
+    MIN_RELIABLE_SENTS = 10
+    if len(bigrams) < MIN_RELIABLE_SENTS:
+        baseline_mean = HUMAN_BASELINES.get("sopd", (0.70, 0.12))[0]
+        dampening = len(bigrams) / MIN_RELIABLE_SENTS
+        raw = baseline_mean + (raw - baseline_mean) * dampening
+
+    return raw
 
 
 # ===========================================================================

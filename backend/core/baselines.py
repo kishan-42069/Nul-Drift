@@ -18,27 +18,27 @@ A high negative z-score means the text is MORE human-like on that dimension.
 HUMAN_BASELINES: dict[str, tuple[float, float]] = {
     # Primary Signals (weight × 2)
     # Sentence Length Variance — humans show high coefficient-of-variation
-    "slv": (0.58, 0.14),
+    "slv": (0.4419, 0.1237),
 
-    # Syntactic Tree Depth Variance — humans mix shallow + deep clauses
-    "stdv": (2.80, 1.10),
+    # Syntactic Tree Depth Variance (std) — humans mix shallow + deep clauses
+    "stdv": (1.9579, 0.5678),
 
-    # Burstiness Index — standard deviation of sentence lengths (human: high std)
-    "burstiness": (8.50, 2.50),
+    # Burstiness Index — mean content-word length; higher = more Latinate/AI-like
+    "burstiness": (6.1169, 0.5131),
 
     # Secondary Signals (weight × 1.5)
     # MATTR — humans use diverse vocabulary relative to window size
-    "mattr": (0.80, 0.06),
+    "mattr": (0.7744, 0.0393),
 
     # Discourse Connector Density — humans use connectors sparingly
-    "dcd": (0.05, 0.05),
+    "dcd": (0.0617, 0.082),
 
     # Sentence Opening POS Diversity — humans vary sentence starts
-    "sopd": (0.70, 0.12),
+    "sopd": (0.6462, 0.1423),
 
     # Supporting Signal (weight × 1)
     # Punctuation Entropy — humans use varied punctuation expressively
-    "punct_entropy": (1.85, 0.45),
+    "punct_entropy": (1.3572, 0.5014),
 }
 
 # ---------------------------------------------------------------------------
@@ -46,15 +46,15 @@ HUMAN_BASELINES: dict[str, tuple[float, float]] = {
 # ---------------------------------------------------------------------------
 SIGNAL_WEIGHTS: dict[str, float] = {
     # Primary
-    "slv": 2.0,
-    "stdv": 2.0,
-    "burstiness": 2.0,
+    "slv": 2.19,
+    "stdv": 1.59,
+    "burstiness": 2.6,
     # Secondary
-    "mattr": 1.5,
-    "dcd": 1.5,
-    "sopd": 1.5,
+    "mattr": 1.43,
+    "dcd": 1.95,
+    "sopd": 1.38,
     # Supporting
-    "punct_entropy": 1.0,
+    "punct_entropy": 1.3,
 }
 
 # ---------------------------------------------------------------------------
@@ -64,7 +64,6 @@ SIGNAL_WEIGHTS: dict[str, float] = {
 INVERTED_SIGNALS: set[str] = {
     "slv",          # low variance → AI
     "stdv",         # low depth variance → AI
-    "burstiness",   # low hapax rate → AI
     "mattr",        # low lexical diversity → AI
     "sopd",         # low POS variety → AI
     "punct_entropy" # low punctuation entropy → AI
@@ -74,7 +73,8 @@ INVERTED_SIGNALS: set[str] = {
 # Signals where HIGHER raw value = more AI-like (DCD: high connector use)
 # ---------------------------------------------------------------------------
 NORMAL_SIGNALS: set[str] = {
-    "dcd",
+    "dcd",        # high connector density → AI
+    "burstiness", # high mean content-word length → AI
 }
 
 # ---------------------------------------------------------------------------
