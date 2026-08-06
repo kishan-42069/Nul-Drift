@@ -5,7 +5,7 @@ export default function ExplainPanel({ result }) {
   const clean = result.signals.filter(s => !s.is_suspicious)
 
   return (
-    <div className="glass-card explain-panel" role="region" aria-label="Analysis explanation">
+    <div className="explain-panel" role="region" aria-label="Analysis explanation">
       <p className="section-label">💡 Reviewer Notes</p>
 
       {suspicious.length > 0 ? (
@@ -35,7 +35,7 @@ export default function ExplainPanel({ result }) {
       )}
 
       <div className="explain-note" style={{ marginTop: '1rem' }}>
-        No single signal triggers a verdict. ProseGuard surfaces statistical evidence
+        No single signal triggers a verdict. Nul!Drift surfaces statistical evidence
         — a human reviewer makes the final call.
       </div>
     </div>

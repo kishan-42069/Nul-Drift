@@ -6,95 +6,136 @@ import SignalBar from './components/SignalBar'
 import ExplainPanel from './components/ExplainPanel'
 
 export default function App() {
-  const [result, setResult] = useState(null)
-  const [error, setError] = useState(null)
+  const [screen, setScreen]   = useState('input')   // 'input' | 'results'
+  const [result, setResult]   = useState(null)
+  const [error,  setError]    = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const handleResult = useCallback((data) => setResult(data), [])
-  const handleError = useCallback((msg) => setError(msg), [])
-  const handleLoading = useCallback((state) => setLoading(state), [])
+  const handleResult  = useCallback((data) => { setResult(data); setScreen('results') }, [])
+  const handleError   = useCallback((msg)  => setError(msg),   [])
+  const handleLoading = useCallback((st)   => setLoading(st),  [])
 
   return (
-    <>
-      {/* Animated background orbs */}
-      <div className="bg-orbs" aria-hidden="true">
-        <div className="bg-orb bg-orb-1" />
-        <div className="bg-orb bg-orb-2" />
-        <div className="bg-orb bg-orb-3" />
-      </div>
+    <div className="app-root">
 
-      <div className="app-root">
-        {/* Header */}
+      {/* ══════════════════════════════════════════
+          SCREEN 1 — INPUT
+      ══════════════════════════════════════════ */}
+      <div className={`screen-input ${screen === 'input' ? 'screen-visible' : 'screen-hidden'}`}>
+
+        {/* ── Floating animated background shapes ── */}
+        <div className="floating-bg" aria-hidden="true">
+          {/* Blobs */}
+          <div className="shape blob blob-1" />
+          <div className="shape blob blob-2" />
+          <div className="shape blob blob-3" />
+          {/* Rings */}
+          <div className="shape ring ring-1" />
+          <div className="shape ring ring-2" />
+          <div className="shape ring ring-3" />
+          <div className="shape ring ring-4" />
+          {/* Diamonds */}
+          <div className="shape diamond diamond-1" />
+          <div className="shape diamond diamond-2" />
+          <div className="shape diamond diamond-3" />
+          {/* Dots */}
+          <div className="shape dot dot-1" />
+          <div className="shape dot dot-2" />
+          <div className="shape dot dot-3" />
+          <div className="shape dot dot-4" />
+          <div className="shape dot dot-5" />
+          {/* Triangles */}
+          <div className="shape tri tri-1" />
+          <div className="shape tri tri-2" />
+        </div>
+
+        {/* ── Header ── */}
         <header className="app-header" role="banner">
           <div className="logo">
-            <div className="logo-icon" aria-hidden="true">🛡️</div>
+            <div className="logo-icon" aria-hidden="true">⟁</div>
             <div>
-              <div className="logo-text">ProseGuard</div>
+              <div className="logo-text">Nul!Drift</div>
               <div className="logo-tagline">AI Essay Detection</div>
             </div>
           </div>
           <div className="header-badge">100% Local · No APIs · 7 Signals</div>
         </header>
 
-        {/* Main content: two-column layout */}
-        <main className="main-content" role="main">
-          {/* Left column: input */}
-          <EssayInput
-            onResult={handleResult}
-            onError={handleError}
-            onLoading={handleLoading}
-          />
-
-          {/* Right column: results */}
-          <div className="results-panel" aria-live="polite" aria-label="Analysis results">
-            {error && (
-              <div className="error-banner" role="alert">
-                ⚠️ {error}
-              </div>
-            )}
-
-            {!result && !loading && !error && (
-              <div className="glass-card empty-state">
-                <div className="empty-state-icon" aria-hidden="true">🔍</div>
-                <p>Paste an essay on the left and click <strong>Analyze Essay</strong> to see the full signal breakdown.</p>
-              </div>
-            )}
-
-            {loading && !result && (
-              <div className="glass-card empty-state">
-                <div className="btn-spinner" style={{ width: 32, height: 32, borderWidth: 3 }} aria-hidden="true" />
-                <p>Running 7 statistical signals…</p>
-              </div>
-            )}
-
-            {result && (
-              <>
-                {/* Verdict */}
-                <VerdictCard result={result} />
-
-                {/* Signal breakdown */}
-                <div className="glass-card" style={{ padding: '1.25rem' }}>
-                  <p className="section-label">📊 Signal Breakdown</p>
-                  <div className="signals-container">
-                    {result.signals.map(sig => (
-                      <SignalBar key={sig.key} signal={sig} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Explain panel */}
-                <ExplainPanel result={result} />
-              </>
-            )}
+        {/* ── Input main ── */}
+        <main className="input-main" role="main">
+          {/* Depth-effect card */}
+          <div className="depth-wrapper">
+            <div className="input-card">
+              <EssayInput
+                onResult={handleResult}
+                onError={handleError}
+                onLoading={handleLoading}
+              />
+              {error && (
+                <div className="error-banner" role="alert">⚠️ {error}</div>
+              )}
+            </div>
           </div>
+          <p className="input-hint">
+            Paste any essay · minimum 50 characters · 7 signals run entirely locally
+          </p>
+        </main>
+      </div>
+
+      {/* ══════════════════════════════════════════
+          SCREEN 2 — RESULTS
+      ══════════════════════════════════════════ */}
+      <div className={`screen-results ${screen === 'results' ? 'screen-visible' : 'screen-hidden'}`}>
+
+        {/* ── Results header ── */}
+        <header className="app-header results-header" role="banner">
+          <button
+            id="back-to-input-btn"
+            className="back-btn"
+            onClick={() => setScreen('input')}
+            aria-label="Go back to essay input"
+          >
+            ← Back
+          </button>
+          <div className="logo">
+            <div className="logo-icon" aria-hidden="true">⟁</div>
+            <div>
+              <div className="logo-text">Nul!Drift</div>
+              <div className="logo-tagline">Analysis Results</div>
+            </div>
+          </div>
+          <div className="header-badge">100% Local · No APIs · 7 Signals</div>
+        </header>
+
+        {/* ── Results content ── */}
+        <main className="results-main" role="main" aria-live="polite" aria-label="Analysis results">
+          {result && (
+            <div className="results-container">
+              {/* Verdict ring + summary */}
+              <VerdictCard result={result} />
+
+              {/* Signal breakdown */}
+              <div className="results-card">
+                <p className="section-label">📊 Signal Breakdown</p>
+                <div className="signals-container">
+                  {result.signals.map(sig => (
+                    <SignalBar key={sig.key} signal={sig} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Reviewer notes */}
+              <ExplainPanel result={result} />
+            </div>
+          )}
         </main>
 
-        {/* Footer */}
         <footer className="app-footer" role="contentinfo">
-          ProseGuard · Local AI-essay detection · 7 statistical signals · No LLM-as-judge ·{' '}
+          Nul!Drift · Local AI-essay detection · 7 statistical signals · No LLM-as-judge ·{' '}
           <span style={{ color: 'var(--text-muted)' }}>Every flag shows <em>why</em>.</span>
         </footer>
       </div>
-    </>
+
+    </div>
   )
 }

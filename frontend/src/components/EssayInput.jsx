@@ -34,7 +34,7 @@ export default function EssayInput({ onResult, onError, onLoading }) {
       const data = await res.json()
       onResult(data)
     } catch (e) {
-      onError(e.message || 'Failed to connect to ProseGuard API. Is the backend running?')
+      onError(e.message || 'Failed to connect to Nul!Drift API. Is the backend running?')
     } finally {
       setLoading(false)
       onLoading(false)
@@ -44,15 +44,18 @@ export default function EssayInput({ onResult, onError, onLoading }) {
   const canAnalyze = text.trim().length >= 50 && !loading
 
   return (
-    <div className="glass-card input-panel">
-      <p className="section-label">📝 Essay Input</p>
+    <div className="input-panel">
+      <div>
+        <h1 className="input-title">Analyze Essay</h1>
+        <p className="input-subtitle">Paste a college admissions essay to check for AI-generated prose.</p>
+      </div>
       <textarea
         ref={textareaRef}
         id="essay-textarea"
         className={`essay-textarea${pasteFlash ? ' paste-flash' : ''}`}
         placeholder="Paste a college admissions essay here (minimum 50 characters)…
 
-ProseGuard analyzes 7 statistical signals to detect AI-generated prose — locally, with no external API calls."
+Nul!Drift analyzes 7 statistical signals to detect AI-generated prose — locally, with no external API calls."
         value={text}
         onChange={e => setText(e.target.value)}
         onPaste={handlePaste}
