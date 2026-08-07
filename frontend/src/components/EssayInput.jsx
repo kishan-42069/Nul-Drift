@@ -2,14 +2,14 @@ import React, { useState, useRef, useCallback } from 'react'
 
 const API_URL = 'http://localhost:8000'
 
-export default function EssayInput({ onResult, onError, onLoading }) {
-  const [text, setText] = useState('')
-  const [loading, setLoading] = useState(false)
+export default function EssayInput({ onScanStart, onResult, onError }) {
+  const [text, setText]             = useState('')
   const [pasteFlash, setPasteFlash] = useState(false)
   const textareaRef = useRef(null)
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0
   const charCount = text.length
+  const need      = Math.max(0, 50 - text.trim().length)
 
   const handlePaste = useCallback(() => {
     setPasteFlash(true)
@@ -17,15 +17,17 @@ export default function EssayInput({ onResult, onError, onLoading }) {
   }, [])
 
   const handleAnalyze = useCallback(async () => {
-    if (text.trim().length < 50) return
-    setLoading(true)
-    onLoading(true)
-    onError(null)
+    const cleanText = text.trim()
+    if (cleanText.length < 50) return
+
+    // Switch to scanner screen immediately — API call runs concurrently
+    onScanStart(cleanText)
+
     try {
       const res = await fetch(`${API_URL}/analyze`, {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text.trim() }),
+        body:    JSON.stringify({ text: cleanText }),
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
@@ -35,42 +37,45 @@ export default function EssayInput({ onResult, onError, onLoading }) {
       onResult(data)
     } catch (e) {
       onError(e.message || 'Failed to connect to Nul!Drift API. Is the backend running?')
-    } finally {
-      setLoading(false)
-      onLoading(false)
     }
-  }, [text, onResult, onError, onLoading])
+  }, [text, onScanStart, onResult, onError])
 
-  const canAnalyze = text.trim().length >= 50 && !loading
+  const canAnalyze = text.trim().length >= 50
 
   return (
     <div className="input-panel">
       <div>
         <h1 className="input-title">Analyze Essay</h1>
-        <p className="input-subtitle">Paste a college admissions essay to check for AI-generated prose.</p>
+        <p className="input-subtitle">
+          Paste a college admissions essay to check for AI-generated prose.
+        </p>
       </div>
+
       <textarea
         ref={textareaRef}
         id="essay-textarea"
         className={`essay-textarea${pasteFlash ? ' paste-flash' : ''}`}
-        placeholder="Paste a college admissions essay here (minimum 50 characters)…
-
-Nul!Drift analyzes 7 statistical signals to detect AI-generated prose — locally, with no external API calls."
+        placeholder={
+          `Paste a college admissions essay here (minimum 50 characters)…\n\nNul!Drift analyzes 7 statistical signals to detect AI-generated prose — locally, with no external API calls.`
+        }
         value={text}
         onChange={e => setText(e.target.value)}
         onPaste={handlePaste}
         spellCheck={false}
         aria-label="Essay text input"
       />
+
+      {/* Stats row */}
       <div className="text-stats">
         <div>Words: <span>{wordCount.toLocaleString()}</span></div>
         <div>Characters: <span>{charCount.toLocaleString()}</span></div>
-        {text.trim().length > 0 && text.trim().length < 50 && (
+        {text.trim().length > 0 && need > 0 && (
           <div style={{ color: 'var(--color-moderate)' }}>
-            Need {50 - text.trim().length} more characters
+            {need} more characters needed
           </div>
         )}
       </div>
+
       <button
         id="analyze-btn"
         className="analyze-btn"
@@ -78,10 +83,7 @@ Nul!Drift analyzes 7 statistical signals to detect AI-generated prose — locall
         disabled={!canAnalyze}
         aria-label="Analyze essay for AI generation signals"
       >
-        {loading
-          ? <><span className="btn-spinner" />Analyzing…</>
-          : '🔍 Analyze Essay'
-        }
+        Analyze Essay
       </button>
     </div>
   )

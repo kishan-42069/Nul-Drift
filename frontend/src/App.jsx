@@ -1,55 +1,80 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import './index.css'
-import EssayInput from './components/EssayInput'
-import VerdictCard from './components/VerdictCard'
-import SignalBar from './components/SignalBar'
-import ExplainPanel from './components/ExplainPanel'
+import EssayInput    from './components/EssayInput'
+import VerdictCard   from './components/VerdictCard'
+import SignalBar     from './components/SignalBar'
+import ExplainPanel  from './components/ExplainPanel'
+import ScannerScreen from './components/ScannerScreen'
+import EssayPanel    from './components/EssayPanel'
 
 export default function App() {
-  const [screen, setScreen]   = useState('input')   // 'input' | 'results'
-  const [result, setResult]   = useState(null)
-  const [error,  setError]    = useState(null)
-  const [loading, setLoading] = useState(false)
+  // screen: 'input' | 'scanning' | 'results'
+  const [screen, setScreen]         = useState('input')
+  const [result, setResult]         = useState(null)
+  const [essayText, setEssayText]   = useState('')
+  const [error, setError]           = useState(null)
+  const [hoveredSignal, setHoveredSignal] = useState(null)
 
-  const handleResult  = useCallback((data) => { setResult(data); setScreen('results') }, [])
-  const handleError   = useCallback((msg)  => setError(msg),   [])
-  const handleLoading = useCallback((st)   => setLoading(st),  [])
+  // Coordination refs — scanner animation and API call run concurrently;
+  // we transition to results only when BOTH have finished.
+  const pendingResultRef = useRef(null)
+  const animDoneRef      = useRef(false)
+
+  const tryTransition = useCallback(() => {
+    if (pendingResultRef.current && animDoneRef.current) {
+      setResult(pendingResultRef.current)
+      setScreen('results')
+    }
+  }, [])
+
+  // Called by EssayInput the instant Analyze is clicked (before the fetch)
+  const handleScanStart = useCallback((text) => {
+    setEssayText(text)
+    setError(null)
+    pendingResultRef.current = null
+    animDoneRef.current      = false
+    setScreen('scanning')
+  }, [])
+
+  // Called by EssayInput when the API fetch resolves successfully
+  const handleResult = useCallback((data) => {
+    pendingResultRef.current = data
+    tryTransition()
+  }, [tryTransition])
+
+  // Called by EssayInput when the API fetch fails
+  const handleError = useCallback((msg) => {
+    setError(msg)
+    pendingResultRef.current = null
+    animDoneRef.current      = false
+    setScreen('input')
+  }, [])
+
+  // Called by ScannerScreen when all 6 steps finish
+  const handleScannerComplete = useCallback(() => {
+    animDoneRef.current = true
+    tryTransition()
+  }, [tryTransition])
+
+  const handleBack = useCallback(() => {
+    setScreen('input')
+    setHoveredSignal(null)
+  }, [])
 
   return (
     <div className="app-root">
+
+      {/* ── Ambient mesh (persists across all screens) ── */}
+      <div className="mesh-bg" aria-hidden="true">
+        <div className="mesh-orb mesh-orb-1" />
+        <div className="mesh-orb mesh-orb-2" />
+        <div className="mesh-orb mesh-orb-3" />
+      </div>
 
       {/* ══════════════════════════════════════════
           SCREEN 1 — INPUT
       ══════════════════════════════════════════ */}
       <div className={`screen-input ${screen === 'input' ? 'screen-visible' : 'screen-hidden'}`}>
-
-        {/* ── Floating animated background shapes ── */}
-        <div className="floating-bg" aria-hidden="true">
-          {/* Blobs */}
-          <div className="shape blob blob-1" />
-          <div className="shape blob blob-2" />
-          <div className="shape blob blob-3" />
-          {/* Rings */}
-          <div className="shape ring ring-1" />
-          <div className="shape ring ring-2" />
-          <div className="shape ring ring-3" />
-          <div className="shape ring ring-4" />
-          {/* Diamonds */}
-          <div className="shape diamond diamond-1" />
-          <div className="shape diamond diamond-2" />
-          <div className="shape diamond diamond-3" />
-          {/* Dots */}
-          <div className="shape dot dot-1" />
-          <div className="shape dot dot-2" />
-          <div className="shape dot dot-3" />
-          <div className="shape dot dot-4" />
-          <div className="shape dot dot-5" />
-          {/* Triangles */}
-          <div className="shape tri tri-1" />
-          <div className="shape tri tri-2" />
-        </div>
-
-        {/* ── Header ── */}
         <header className="app-header" role="banner">
           <div className="logo">
             <div className="logo-icon" aria-hidden="true">⟁</div>
@@ -61,15 +86,13 @@ export default function App() {
           <div className="header-badge">100% Local · No APIs · 7 Signals</div>
         </header>
 
-        {/* ── Input main ── */}
         <main className="input-main" role="main">
-          {/* Depth-effect card */}
           <div className="depth-wrapper">
             <div className="input-card">
               <EssayInput
+                onScanStart={handleScanStart}
                 onResult={handleResult}
                 onError={handleError}
-                onLoading={handleLoading}
               />
               {error && (
                 <div className="error-banner" role="alert">⚠️ {error}</div>
@@ -83,16 +106,24 @@ export default function App() {
       </div>
 
       {/* ══════════════════════════════════════════
+          SCREEN 1.5 — SCANNER (loading animation)
+      ══════════════════════════════════════════ */}
+      {screen === 'scanning' && (
+        <ScannerScreen
+          wordCount={essayText.trim().split(/\s+/).filter(Boolean).length}
+          onComplete={handleScannerComplete}
+        />
+      )}
+
+      {/* ══════════════════════════════════════════
           SCREEN 2 — RESULTS
       ══════════════════════════════════════════ */}
       <div className={`screen-results ${screen === 'results' ? 'screen-visible' : 'screen-hidden'}`}>
-
-        {/* ── Results header ── */}
         <header className="app-header results-header" role="banner">
           <button
             id="back-to-input-btn"
             className="back-btn"
-            onClick={() => setScreen('input')}
+            onClick={handleBack}
             aria-label="Go back to essay input"
           >
             ← Back
@@ -107,32 +138,66 @@ export default function App() {
           <div className="header-badge">100% Local · No APIs · 7 Signals</div>
         </header>
 
-        {/* ── Results content ── */}
         <main className="results-main" role="main" aria-live="polite" aria-label="Analysis results">
           {result && (
             <div className="results-container">
-              {/* Verdict ring + summary */}
+
+              {/* 1. Verdict card — full width */}
               <VerdictCard result={result} />
 
-              {/* Signal breakdown */}
-              <div className="results-card">
-                <p className="section-label">📊 Signal Breakdown</p>
-                <div className="signals-container">
-                  {result.signals.map(sig => (
-                    <SignalBar key={sig.key} signal={sig} />
-                  ))}
-                </div>
+              {/* 2. Essay panel + Signal breakdown — side by side on desktop */}
+              <div className="results-essay-signals">
+                <EssayPanel
+                  text={essayText}
+                  hoveredSignal={hoveredSignal}
+                />
+
+                <section className="results-section" aria-labelledby="signals-heading">
+                  <div className="results-section-header">
+                    <div>
+                      <h2 className="results-section-title" id="signals-heading">Signal Breakdown</h2>
+                      <p className="results-section-subtitle">
+                        Click any check to expand its explanation and highlight that pattern in your essay.
+                      </p>
+                    </div>
+                    <span className="results-section-badge">
+                      {result.signals.filter(s => s.is_suspicious).length} / {result.signals.length} flagged
+                    </span>
+                  </div>
+                  <div className="signals-container">
+                    {result.signals.map(sig => (
+                      <SignalBar
+                        key={sig.key}
+                        signal={sig}
+                        isHighlighted={hoveredSignal?.key === sig.key}
+                        onHover={setHoveredSignal}
+                        onHoverEnd={() => setHoveredSignal(null)}
+                      />
+                    ))}
+                  </div>
+                </section>
               </div>
 
-              {/* Reviewer notes */}
-              <ExplainPanel result={result} />
+              {/* 3. Reviewer notes — full width */}
+              <section className="results-section" aria-labelledby="notes-heading">
+                <div className="results-section-header">
+                  <div>
+                    <h2 className="results-section-title" id="notes-heading">Reviewer Notes</h2>
+                    <p className="results-section-subtitle">
+                      A plain-English summary of what the analysis found and what it means.
+                    </p>
+                  </div>
+                </div>
+                <ExplainPanel result={result} />
+              </section>
+
             </div>
           )}
         </main>
 
         <footer className="app-footer" role="contentinfo">
           Nul!Drift · Local AI-essay detection · 7 statistical signals · No LLM-as-judge ·{' '}
-          <span style={{ color: 'var(--text-muted)' }}>Every flag shows <em>why</em>.</span>
+          <span style={{ color: 'var(--text-subtle)' }}>Every flag shows <em>why</em>.</span>
         </footer>
       </div>
 
