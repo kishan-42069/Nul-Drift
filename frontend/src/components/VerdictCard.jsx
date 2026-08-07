@@ -13,7 +13,6 @@ const VERDICT_DESC = {
 }
 
 const CIRCUMFERENCE = 2 * Math.PI * 38 // r=38
-
 export default function VerdictCard({ result }) {
   const cls  = VERDICT_CLASS[result.verdict] || 'moderate'
   const desc = VERDICT_DESC[result.verdict]  || ''

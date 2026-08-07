@@ -23,9 +23,11 @@ from dataclasses import asdict
 from typing import Annotated
 
 import spacy
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
+from api.extractors import extract_text_from_pdf, extract_text_from_docx
 
 from core.signals import extract_all
 from core.scorer import score
@@ -136,3 +138,38 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         word_count=result.word_count,
         sentence_count=result.sentence_count,
     )
+
+@app.post("/analyze/file", response_model=AnalyzeResponse)
+async def analyze_file(file: UploadFile = File(...)):
+    filename = file.filename.lower()
+    
+    try:
+        content = await file.read()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Failed to read file.")
+        
+    text = ""
+    if filename.endswith(".pdf"):
+        try:
+            text = extract_text_from_pdf(content)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Failed to parse PDF file.")
+    elif filename.endswith(".docx") or filename.endswith(".doc"):
+        try:
+            text = extract_text_from_docx(content)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Failed to parse Word file.")
+    elif filename.endswith(".txt"):
+        try:
+            text = content.decode("utf-8")
+        except Exception:
+            raise HTTPException(status_code=400, detail="Failed to decode text file.")
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported file format. Please upload PDF or Word documents.")
+
+    text = text.strip()
+    if len(text) < 50:
+        raise HTTPException(status_code=422, detail=f"Text extracted is too short ({len(text)} chars). Must be at least 50 characters.")
+
+    req = AnalyzeRequest(text=text)
+    return analyze(req)
