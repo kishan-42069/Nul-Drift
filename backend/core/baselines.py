@@ -34,7 +34,7 @@ HUMAN_BASELINES: dict[str, tuple[float, float]] = {
     "dcd": (0.0617, 0.082),
 
     # Sentence Opening POS Diversity — humans vary sentence starts
-    "sopd": (0.6462, 0.1423),
+    "sopd": (0.645, 0.1412),
 
     # Supporting Signal (weight × 1)
     # Punctuation Entropy — humans use varied punctuation expressively
@@ -52,7 +52,7 @@ SIGNAL_WEIGHTS: dict[str, float] = {
     # Secondary
     "mattr": 1.43,
     "dcd": 1.95,
-    "sopd": 1.38,
+    "sopd": 1.39,
     # Supporting
     "punct_entropy": 1.3,
 }

@@ -58,11 +58,11 @@ export default function ScannerScreen({ wordCount, onComplete }) {
                     {isDone ? '✓' : isActive ? <span className="scanner-step-spinner" /> : <span className="scanner-step-circle" />}
                   </div>
                   <div className="scanner-step-body">
-                    <span className="scanner-step-label">{step.label}</span>
-                    {isActive && (
-                      <span className="scanner-step-detail">{step.detail}</span>
-                    )}
-                  </div>
+                  <span className="scanner-step-label">{step.label}</span>
+                  <span className="scanner-step-detail" style={{ opacity: isActive ? 1 : 0, transition: 'opacity 0.2s', display: 'block' }}>
+                    {step.detail}
+                  </span>
+                </div>
                   {isActive && (
                     <span className="scanner-pulse-dots" aria-hidden="true">
                       <span />

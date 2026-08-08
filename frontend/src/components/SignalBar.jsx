@@ -74,25 +74,25 @@ const RISK_LABEL = {
   suspicious: { text: 'AI-Like',      bg: 'var(--color-high-bg)', border: 'var(--color-high-border)', color: 'var(--color-high)' },
 }
 
+const CIRCUMFERENCE = 2 * Math.PI * 22 // r=22
 export default function SignalBar({ signal, isHighlighted, onHover, onHoverEnd }) {
   const [expanded, setExpanded] = useState(false)
 
   const barClass     = getBarClass(signal.z_score)
-  const barWidth     = getBarWidth(signal.z_score)
+  const barWidth     = getBarWidth(signal.z_score) // 0 to 100
   const risk         = RISK_LABEL[barClass]
   const friendlyName = FRIENDLY_NAMES[signal.key] || signal.name
   const desc         = FRIENDLY_DESC[signal.key]
   const importance   = IMPORTANCE[signal.weight_label] || IMPORTANCE['Supporting']
 
-  // Notify parent when this card is opened or closed so the essay highlights
+  const offset = CIRCUMFERENCE - (barWidth / 100) * CIRCUMFERENCE
+
   useEffect(() => {
     if (expanded) {
       onHover && onHover(signal)
     } else {
       onHoverEnd && onHoverEnd()
     }
-    // Intentionally omitting signal/onHover/onHoverEnd from deps — these are
-    // stable references and we only want to fire on the expanded toggle.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded])
 
@@ -101,19 +101,35 @@ export default function SignalBar({ signal, isHighlighted, onHover, onHoverEnd }
       className={`signal-item${signal.is_suspicious ? ' suspicious' : ''}${isHighlighted ? ' signal-item--highlighted' : ''}`}
       id={`signal-${signal.key}`}
     >
-      {/* ── Header row ── */}
       <button
         className="signal-header signal-header-btn"
         onClick={() => setExpanded(v => !v)}
         aria-expanded={expanded}
-        aria-label={`${friendlyName}: ${risk.text}. Click to ${expanded ? 'collapse' : 'expand'} details.`}
       >
-        <div className="signal-header-left">
-          <span className="signal-name">{friendlyName}</span>
-          {desc && (
-            <span className="signal-what">{desc.what}</span>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="signal-ring-wrap" style={{ position: 'relative', width: '50px', height: '50px' }}>
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="22" fill="none" stroke="var(--border-mid)" strokeWidth="4" />
+              <circle
+                cx="25" cy="25" r="22" fill="none"
+                stroke={risk.color} strokeWidth="4"
+                strokeDasharray={CIRCUMFERENCE}
+                strokeDashoffset={offset}
+                strokeLinecap="round"
+                transform="rotate(-90 25 25)"
+                style={{ transition: 'stroke-dashoffset 1s ease-out' }}
+              />
+            </svg>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700, color: risk.color }}>
+              {barWidth}%
+            </div>
+          </div>
+          <div className="signal-header-left" style={{ textAlign: 'left' }}>
+            <span className="signal-name">{friendlyName}</span>
+            {desc && <span className="signal-what">{desc.what}</span>}
+          </div>
         </div>
+
         <div className="signal-meta-group">
           <span
             className="signal-risk-badge"
@@ -127,25 +143,15 @@ export default function SignalBar({ signal, isHighlighted, onHover, onHoverEnd }
         </div>
       </button>
 
-      {/* ── Progress bar ── */}
-      <div className="signal-bar-track" aria-hidden="true">
-        <div className={`signal-bar-fill ${barClass}`} style={{ width: `${barWidth}%` }} />
-        <div className="signal-bar-labels" aria-hidden="true">
-          <span>Human</span>
-          <span>AI</span>
-        </div>
-      </div>
-
-      {/* ── Expanded explanation ── */}
       {expanded && (
         <div className="signal-expanded" role="region">
-          <p className="signal-explanation-full">
+          <p className="signal-explanation-full fade-in-fast">
             {signal.is_suspicious
               ? (desc ? desc.ai : signal.explanation)
               : (desc ? desc.human : signal.explanation)
             }
           </p>
-          <p className="signal-importance-note">
+          <p className="signal-importance-note fade-in-fast" style={{ animationDelay: '0.1s' }}>
             This check carries <strong>{importance.label}</strong> in the overall result.
           </p>
         </div>

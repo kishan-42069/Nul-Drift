@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react'
 import './index.css'
+import LandingPage   from './components/LandingPage'
 import EssayInput    from './components/EssayInput'
 import VerdictCard   from './components/VerdictCard'
 import SignalBar     from './components/SignalBar'
@@ -8,8 +9,8 @@ import ScannerScreen from './components/ScannerScreen'
 import EssayPanel    from './components/EssayPanel'
 
 export default function App() {
-  // screen: 'input' | 'scanning' | 'results'
-  const [screen, setScreen]         = useState('input')
+  // screen: 'landing' | 'input' | 'scanning' | 'results'
+  const [screen, setScreen]         = useState('landing')
   const [result, setResult]         = useState(null)
   const [essayText, setEssayText]   = useState('')
   const [error, setError]           = useState(null)
@@ -72,6 +73,13 @@ export default function App() {
       </div>
 
       {/* ══════════════════════════════════════════
+          SCREEN 0 — LANDING PAGE
+      ══════════════════════════════════════════ */}
+      {screen === 'landing' && (
+        <LandingPage onGetStarted={() => setScreen('input')} />
+      )}
+
+      {/* ══════════════════════════════════════════
           SCREEN 1 — INPUT
       ══════════════════════════════════════════ */}
       <div className={`screen-input ${screen === 'input' ? 'screen-visible' : 'screen-hidden'}`}>
@@ -80,7 +88,7 @@ export default function App() {
             <div className="logo-icon" aria-hidden="true">⟁</div>
             <div>
               <div className="logo-text">Nul!Drift</div>
-              <div className="logo-tagline">AI Essay Detection</div>
+              <div className="logo-tagline">Read Between Tokens.</div>
             </div>
           </div>
           <div className="header-badge">100% Local · No APIs · 7 Signals</div>
