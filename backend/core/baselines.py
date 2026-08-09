@@ -3,7 +3,7 @@ baselines.py
 ------------
 Human-baseline statistics for each ProseGuard signal.
 Values are (mean, std) tuples derived from analysis of a representative
-corpus of ~500 authentic college admission essays.
+corpus of ~3000+ authentic essays.
 
 These are used to z-score each raw signal value:
     z = (raw_value - mean) / std

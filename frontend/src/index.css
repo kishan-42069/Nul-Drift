@@ -488,38 +488,25 @@ body {
 @media (min-width: 980px) {
   .results-container {
     display: grid;
-    grid-template-columns: 0.35fr 0.65fr;
+    grid-template-columns: 0.5fr 0.5fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       "verdict notes"
-      "signals signals";
+      "essay signals";
     gap: 1.25rem;
     align-items: stretch;
   }
   .results-container > .verdict-card {
     grid-area: verdict;
-    height: 100%;
   }
-  .results-container > .results-section:last-child {
+  .results-container > .notes-section {
     grid-area: notes;
-    height: 100%;
   }
-  .results-container > .results-essay-signals {
+  .results-container > .essay-panel {
+    grid-area: essay;
+  }
+  .results-container > .signals-section {
     grid-area: signals;
-  }
-}
-
-/* ── Essay + Signals side-by-side grid ── */
-.results-essay-signals {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-@media (min-width: 980px) {
-  .results-essay-signals {
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 1.25rem;
-    align-items: start;
   }
 }
 

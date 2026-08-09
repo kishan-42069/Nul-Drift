@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import Logo from './Logo'
 
 const STEPS = [
   { label: 'Parsing essay text',            detail: 'Breaking your text into words and sentences',              dur: 380 },
   { label: 'Extracting vocabulary',         detail: 'Measuring how many different words are used',              dur: 400 },
   { label: 'Analysing sentence structure',  detail: 'Computing grammar depth and variation across sentences',   dur: 440 },
   { label: 'Checking writing patterns',     detail: 'Scanning transition phrases, punctuation, and rhythm',     dur: 440 },
-  { label: 'Comparing to human baselines',  detail: 'Running 7 signals against a corpus of 500+ real essays',  dur: 480 },
+  { label: 'Comparing to human baselines',  detail: 'Running 7 signals against a corpus of 3000+ real essays',  dur: 480 },
   { label: 'Generating report',             detail: 'Calculating your final AI suspicion score',                dur: 560 },
 ]
 
@@ -34,7 +35,7 @@ export default function ScannerScreen({ wordCount, onComplete }) {
 
           {/* ── Header ── */}
           <div className="scanner-header">
-            <div className="scanner-logo-icon" aria-hidden="true">⟁</div>
+            <Logo size={28} className="scanner-logo-spacing" />
             <div>
               <div className="scanner-title">Analyzing Essay</div>
               <div className="scanner-sub">

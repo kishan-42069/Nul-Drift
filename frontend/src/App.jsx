@@ -7,6 +7,7 @@ import SignalBar     from './components/SignalBar'
 import ExplainPanel  from './components/ExplainPanel'
 import ScannerScreen from './components/ScannerScreen'
 import EssayPanel    from './components/EssayPanel'
+import Logo          from './components/Logo'
 
 export default function App() {
   // screen: 'landing' | 'input' | 'scanning' | 'results'
@@ -85,13 +86,13 @@ export default function App() {
       <div className={`screen-input ${screen === 'input' ? 'screen-visible' : 'screen-hidden'}`}>
         <header className="app-header" role="banner">
           <div className="logo">
-            <div className="logo-icon" aria-hidden="true">⟁</div>
+            <Logo size={42} />
             <div>
               <div className="logo-text">Nul!Drift</div>
               <div className="logo-tagline">Read Between Tokens.</div>
             </div>
           </div>
-          <div className="header-badge">100% Local · No APIs · 7 Signals</div>
+
         </header>
 
         <main className="input-main" role="main">
@@ -137,31 +138,44 @@ export default function App() {
             ← Back
           </button>
           <div className="logo">
-            <div className="logo-icon" aria-hidden="true">⟁</div>
+            <Logo size={42} />
             <div>
               <div className="logo-text">Nul!Drift</div>
               <div className="logo-tagline">Analysis Results</div>
             </div>
           </div>
-          <div className="header-badge">100% Local · No APIs · 7 Signals</div>
+          <div style={{ width: '74px' }}></div>
         </header>
 
         <main className="results-main" role="main" aria-live="polite" aria-label="Analysis results">
           {result && (
             <div className="results-container">
 
-              {/* 1. Verdict card — full width */}
+              {/* 1. Verdict card — Top Left */}
               <VerdictCard result={result} />
 
-              {/* 2. Essay panel + Signal breakdown — side by side on desktop */}
-              <div className="results-essay-signals">
-                <EssayPanel
-                  text={essayText}
-                  hoveredSignal={hoveredSignal}
-                />
+              {/* 2. Essay panel — Bottom Left */}
+              <EssayPanel
+                text={essayText}
+                hoveredSignal={hoveredSignal}
+              />
 
-                <section className="results-section" aria-labelledby="signals-heading">
-                  <div className="results-section-header">
+              {/* 3. Reviewer notes — Top Right */}
+              <section className="results-section notes-section" aria-labelledby="notes-heading">
+                <div className="results-section-header">
+                  <div>
+                    <h2 className="results-section-title" id="notes-heading">Reviewer Notes</h2>
+                    <p className="results-section-subtitle">
+                      A plain-English summary of what the analysis found and what it means.
+                    </p>
+                  </div>
+                </div>
+                <ExplainPanel result={result} />
+              </section>
+
+              {/* 4. Signal breakdown — Bottom Right */}
+              <section className="results-section signals-section" aria-labelledby="signals-heading">
+                <div className="results-section-header">
                     <div>
                       <h2 className="results-section-title" id="signals-heading">Signal Breakdown</h2>
                       <p className="results-section-subtitle">
@@ -182,21 +196,7 @@ export default function App() {
                         onHoverEnd={() => setHoveredSignal(null)}
                       />
                     ))}
-                  </div>
-                </section>
-              </div>
-
-              {/* 3. Reviewer notes — full width */}
-              <section className="results-section" aria-labelledby="notes-heading">
-                <div className="results-section-header">
-                  <div>
-                    <h2 className="results-section-title" id="notes-heading">Reviewer Notes</h2>
-                    <p className="results-section-subtitle">
-                      A plain-English summary of what the analysis found and what it means.
-                    </p>
-                  </div>
                 </div>
-                <ExplainPanel result={result} />
               </section>
 
             </div>

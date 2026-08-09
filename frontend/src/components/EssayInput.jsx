@@ -2,6 +2,10 @@ import React, { useState, useRef, useCallback } from 'react'
 
 const API_URL = 'http://localhost:8000'
 
+const AI_SAMPLE = `Artificial Intelligence is fundamentally transforming the landscape of modern education and professional development. Furthermore, the integration of intelligent systems facilitates unprecedented levels of productivity and efficiency across various sectors. Additionally, these technologies empower individuals to optimize their workflows and leverage advanced data analytics for superior decision-making processes. Consequently, society must adapt to these rapid technological advancements to ensure sustainable growth and equitable access to resources.`
+
+const HUMAN_SAMPLE = `I remember the first time I tried to ride a bike without training wheels. The pavement looked harder than it ever had before, and my knuckles were white gripping the handlebars. My dad promised he wouldn't let go, but I knew he was lying. I pedaled as fast as I could, feeling the wind catch my hair, and for exactly three seconds, I was flying. Then I crashed into Mrs. Gable's rose bush. It was totally worth it.`
+
 export default function EssayInput({ onScanStart, onResult, onError }) {
   const [text, setText]             = useState('')
   const [pasteFlash, setPasteFlash] = useState(false)
@@ -86,6 +90,15 @@ export default function EssayInput({ onScanStart, onResult, onError }) {
         <p className="input-subtitle">
           Paste a college admissions essay to check for AI-generated prose.
         </p>
+      </div>
+
+      <div className="sample-chips-row">
+        <button className="sample-chip" onClick={() => setText(AI_SAMPLE)}>
+          ⚡ Try AI Sample
+        </button>
+        <button className="sample-chip" onClick={() => setText(HUMAN_SAMPLE)}>
+          ✍️ Try Human Sample
+        </button>
       </div>
 
       <textarea
