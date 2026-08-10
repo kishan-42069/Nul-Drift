@@ -1,0 +1,59 @@
+<div align="center">
+  <h1>Nul!Drift</h1>
+  <p><b>A local, explainable feature-extraction system for detecting AI-generated prose.</b></p>
+</div>
+
+---
+
+**🌐 Website URL:** [ ] *(Link will be added upon deployment)*
+
+## Overview
+Nul!Drift detects AI writing by measuring statistical smoothness. Human writers are rhythmically unpredictable; AI optimizes for predictable token distributions. We use 7 local, concrete statistical signals on passages to find these differences.
+
+## Features
+- **100% Local**: No API calls or cloud dependencies.
+- **Explainable**: See exactly which statistical markers triggered suspicion.
+- **Interactive CLI & Web UI**: Easy to use from the terminal or the browser.
+
+## How to use the CLI
+
+Nul!Drift features an interactive command-line interface that allows you to instantly analyze essays right from your terminal.
+
+### 1. Installation
+
+First, install the package locally using `pip`:
+```bash
+# From the root of the project directory
+pip install -e .
+```
+
+### 2. Running the Interactive CLI
+
+Simply type `nuldrift` in your terminal to launch the interactive prompt:
+
+```bash
+nuldrift
+```
+
+You will see an interactive prompt (`Nul!Drift > `) where you can paste essay text directly or provide the path to a text file. The system will instantly provide a formatted breakdown of the analysis!
+
+*To exit the interactive CLI, type `exit` or `q`.*
+
+### 3. One-Shot Command Analysis
+
+You can also run Nul!Drift on a specific file or text snippet directly:
+
+**Analyze a file:**
+```bash
+nuldrift analyze path/to/essay.txt
+```
+
+**Analyze inline text:**
+```bash
+nuldrift analyze --text "Your text here..."
+```
+
+**Output as JSON:**
+```bash
+nuldrift analyze path/to/essay.txt --json
+```

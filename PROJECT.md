@@ -1,11 +1,11 @@
-# ProseGuard — AI-Generated Essay Detection Pipeline
+# Nul!Drift — AI-Generated Essay Detection Pipeline
 
 > A local, explainable feature-extraction system for detecting AI-generated prose in college admissions essays. No LLM-as-judge. Every flag shows *why*.
 
 ---
 
 ## Philosophy
-ProseGuard detects AI writing by measuring statistical smoothness. Human writers are rhythmically unpredictable; AI optimizes for predictable token distributions. We use 7 local, concrete statistical signals on passages to find these differences.
+Nul!Drift detects AI writing by measuring statistical smoothness. Human writers are rhythmically unpredictable; AI optimizes for predictable token distributions. We use 7 local, concrete statistical signals on passages to find these differences.
 
 ---
 

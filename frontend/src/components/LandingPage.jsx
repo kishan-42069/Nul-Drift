@@ -271,10 +271,24 @@ export default function LandingPage({ onGetStarted }) {
 
         <div className="creator-badge scroll-reveal sr-d4">
           <span className="creator-text">Developed by</span>
-          <a href="https://github.com/kishan-42069" target="_blank" rel="noopener noreferrer" className="creator-link">
-            <img src="https://github.com/kishan-42069.png" alt="kishan-42069" className="creator-avatar" />
-            <span className="creator-name">kishan-42069</span>
-          </a>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <a href="https://github.com/kishan-42069" target="_blank" rel="noopener noreferrer" className="creator-link">
+              <img src="https://github.com/kishan-42069.png" alt="kishan-42069" className="creator-avatar" />
+              <span className="creator-name">kishan-42069</span>
+            </a>
+            <a href="https://github.com/keerthanagp806-boop" target="_blank" rel="noopener noreferrer" className="creator-link">
+              <img src="https://github.com/keerthanagp806-boop.png" alt="keerthanagp806-boop" className="creator-avatar" />
+              <span className="creator-name">keerthanagp806-boop</span>
+            </a>
+            <a href="https://github.com/Kishore0921" target="_blank" rel="noopener noreferrer" className="creator-link">
+              <img src="https://github.com/Kishore0921.png" alt="Kishore0921" className="creator-avatar" />
+              <span className="creator-name">Kishore0921</span>
+            </a>
+            <a href="https://github.com/keerthanayadavan-ui" target="_blank" rel="noopener noreferrer" className="creator-link">
+              <img src="https://github.com/keerthanayadavan-ui.png" alt="keerthanayadavan-ui" className="creator-avatar" />
+              <span className="creator-name">keerthanayadavan-ui</span>
+            </a>
+          </div>
         </div>
       </section>
 

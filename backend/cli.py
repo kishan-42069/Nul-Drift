@@ -33,8 +33,8 @@ from core.signals import extract_all
 from core.scorer import score, AnalysisResult
 
 app = typer.Typer(
-    name="proseguard",
-    help="🛡️  ProseGuard — Local AI-essay detection. No LLM-as-judge.",
+    name="Nul!Drift",
+    help="🛡️  Nul!Drift — Local AI-essay detection. No LLM-as-judge.",
     rich_markup_mode="rich",
 )
 console = Console()
@@ -187,9 +187,64 @@ def analyze(
     console.print()
     console.print(
         "[dim italic]Note: No single signal triggers a verdict. "
-        "ProseGuard surfaces evidence — a human reviewer makes the final call.[/]"
+        "Nul!Drift surfaces evidence — a human reviewer makes the final call.[/]"
     )
     console.print()
+
+
+@app.callback(invoke_without_command=True)
+def main(ctx: typer.Context):
+    """Interactive mode when executed directly without arguments."""
+    if ctx.invoked_subcommand is not None:
+        return
+
+    console.print(
+        Panel.fit(
+            "[bold cyan]Nul!Drift Interactive CLI[/]\n"
+            "[dim]Statistical AI-essay detection engine. Type 'exit' or 'q' to quit.[/]",
+            title="[bold magenta]Nul!Drift[/]",
+            border_style="cyan",
+        )
+    )
+
+    nlp = _load_nlp()
+
+    while True:
+        try:
+            console.print("\n[bold yellow]Nul!Drift > [/]", end="")
+            user_input = sys.stdin.readline()
+            if not user_input:
+                break
+            user_input = user_input.strip()
+            if user_input.lower() in ("exit", "quit", "q"):
+                console.print("[dim]Exiting Nul!Drift CLI. Goodbye![/]")
+                break
+            if not user_input:
+                continue
+
+            if os.path.isfile(user_input):
+                with open(user_input, "r", encoding="utf-8") as f:
+                    essay_text = f.read().strip()
+            else:
+                essay_text = user_input
+
+            if len(essay_text) < 50:
+                console.print("[red]Error:[/] Text is too short (minimum 50 characters).")
+                continue
+
+            with console.status("[bold cyan]Analyzing...[/]", spinner="dots"):
+                doc = nlp(essay_text)
+                word_count = sum(1 for t in doc if t.is_alpha)
+                sentence_count = len(list(doc.sents))
+                raw_signals = extract_all(doc)
+                result = score(raw_signals, word_count=word_count, sentence_count=sentence_count)
+
+            _render_verdict_banner(result)
+            _render_signal_table(result)
+
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n[dim]Exiting Nul!Drift CLI.[/]")
+            break
 
 
 if __name__ == "__main__":
