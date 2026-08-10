@@ -46,7 +46,7 @@ export default function LandingPage({ onGetStarted }) {
       {/* STICKY NAV */}
       <header className="app-header landing-header sticky" role="banner" style={{ justifyContent: 'flex-end' }}>
         <div className="header-nav">
-          <a href="https://github.com/Kishan-Ravi" target="_blank" rel="noopener noreferrer" className="nav-link">GitHub</a>
+          <a href="https://github.com/kishan-42069/Nul-Drift" target="_blank" rel="noopener noreferrer" className="nav-link">GitHub</a>
           <button className="btn-primary nav-cta" onClick={onGetStarted}>
             GET STARTED
           </button>
@@ -114,7 +114,7 @@ export default function LandingPage({ onGetStarted }) {
 
       {/* SECTION 1.5: HOW IT WORKS */}
       <section className="how-it-works-section">
-        {/* Label and title stagger in */}
+        {/* Title stagger in */}
         <p className="hiw-label scroll-reveal sr-d1">Simple by design</p>
         <h2 className="hiw-title scroll-reveal sr-d2">
           From paste to verdict in <span className="text-gradient">seconds</span>.
@@ -125,15 +125,15 @@ export default function LandingPage({ onGetStarted }) {
           {HOW_IT_WORKS_STEPS.map((step, i) => (
             <React.Fragment key={i}>
               <div className={`step-item scroll-reveal sr-scale sr-d${i + 2}`}>
-                <div className="step-number-wrap">
-                  <span className="step-emoji">{step.emoji}</span>
-                  <span className="step-num">{i + 1}</span>
-                </div>
+                <div className="step-num">{i + 1}</div>
+                <span className="step-emoji">{step.emoji}</span>
                 <div className="step-title">{step.title}</div>
                 <p className="step-desc">{step.desc}</p>
               </div>
               {i < HOW_IT_WORKS_STEPS.length - 1 && (
-                <div className="step-connector" aria-hidden="true" />
+                <div className="step-connector" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="step-arrow-icon"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                </div>
               )}
             </React.Fragment>
           ))}
@@ -267,6 +267,14 @@ export default function LandingPage({ onGetStarted }) {
               ANALYZE AN ESSAY NOW
             </button>
           </div>
+        </div>
+
+        <div className="creator-badge scroll-reveal sr-d4">
+          <span className="creator-text">Developed by</span>
+          <a href="https://github.com/kishan-42069" target="_blank" rel="noopener noreferrer" className="creator-link">
+            <img src="https://github.com/kishan-42069.png" alt="kishan-42069" className="creator-avatar" />
+            <span className="creator-name">kishan-42069</span>
+          </a>
         </div>
       </section>
 
