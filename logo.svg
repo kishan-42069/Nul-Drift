@@ -1,0 +1,27 @@
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+  <defs>
+    <linearGradient id="logoBgGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E293B" />
+      <stop offset="1" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="logoAccentGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B82F6" />
+      <stop offset="1" stop-color="#8B5CF6" />
+    </linearGradient>
+    <linearGradient id="logoHighlight" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.25" />
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <!-- Base Rounded Square -->
+  <rect width="64" height="64" rx="16" fill="url(#logoBgGrad)" />
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="none" stroke="url(#logoHighlight)" stroke-width="1.5" />
+  
+  <!-- Inner 'Null' Circle -->
+  <circle cx="32" cy="32" r="12" stroke="url(#logoAccentGrad)" stroke-width="4" />
+  
+  <!-- The 'Drift' Slash & Data Nodes -->
+  <path d="M 18 46 L 46 18" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+  <circle cx="46" cy="18" r="4" fill="#3B82F6" />
+  <circle cx="18" cy="46" r="4" fill="#8B5CF6" />
+</svg>

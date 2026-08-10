@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="./logo.svg" alt="Nul!Drift Logo" width="128" />
   <h1>Nul!Drift</h1>
   <p><b>A local, explainable feature-extraction system for detecting AI-generated prose.</b></p>
 </div>
