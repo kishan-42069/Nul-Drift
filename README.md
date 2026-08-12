@@ -16,6 +16,22 @@ Nul!Drift detects AI writing by measuring statistical smoothness. Human writers 
 - **Explainable**: See exactly which statistical markers triggered suspicion.
 - **Interactive CLI & Web UI**: Easy to use from the terminal or the browser.
 
+## Tech Stack
+### Backend
+- **Python** & **FastAPI**: Core API logic and routing.
+- **spaCy**: Advanced NLP processing and statistical signal extraction.
+- **Docker**: Containerization for smooth deployment.
+
+### Frontend
+- **React**: Component-based UI.
+- **Vite**: Lightning-fast build tool and development server.
+- **Vanilla CSS**: Custom, lightweight styling system without heavy frameworks.
+
+### Deployment
+- **Render**: Backend API hosting.
+- **Firebase Hosting**: Fast, global static hosting for the frontend.
+
+
 ## How to use the CLI
 
 Nul!Drift features an interactive command-line interface that allows you to instantly analyze essays right from your terminal.
