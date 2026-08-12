@@ -79,3 +79,5 @@ nuldrift analyze path/to/essay.txt --json
 
 ## Contributing
 Any changes, updates, or improvements are always welcome! Feel free to open an issue or submit a pull request if you'd like to contribute.
+
+**Built for transparency, not black-box detection.** Nul!Drift shows the statistical evidence behind every prediction.
