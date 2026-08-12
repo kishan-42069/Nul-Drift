@@ -94,9 +94,9 @@ export default function LandingPage({ onGetStarted }) {
                 GET STARTED
                 <span className="btn-icon">→</span>
               </button>
-              <button className="btn-secondary" onClick={() => {}}>
+              <a href="https://github.com/kishan-42069/Nul-Drift" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
                 DOWNLOAD CLI
-              </button>
+              </a>
             </div>
           </div>
 
@@ -262,10 +262,13 @@ export default function LandingPage({ onGetStarted }) {
         <div className="cta-box scroll-reveal sr-scale">
           <h2 className="cta-title">Ready to detect AI writing with confidence?</h2>
           <p className="cta-subtitle scroll-reveal sr-d2">Join the open-source movement for transparent AI detection.</p>
-          <div className="scroll-reveal sr-d3">
+          <div className="scroll-reveal sr-d3" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button className="btn-primary large" onClick={onGetStarted}>
               ANALYZE AN ESSAY NOW
             </button>
+            <a href="https://github.com/kishan-42069/Nul-Drift" target="_blank" rel="noopener noreferrer" className="btn-secondary large" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+              DOWNLOAD CLI
+            </a>
           </div>
         </div>
 

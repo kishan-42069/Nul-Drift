@@ -1764,7 +1764,8 @@ body {
   color: var(--text-secondary);
   margin-bottom: 2.5rem;
 }
-.btn-primary.large {
+.btn-primary.large,
+.btn-secondary.large {
   font-size: 1.1rem;
   padding: 1.25rem 2.5rem;
 }
