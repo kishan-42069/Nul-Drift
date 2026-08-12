@@ -32,9 +32,7 @@ from api.extractors import extract_text_from_pdf, extract_text_from_docx
 from core.signals import extract_all
 from core.scorer import score
 
-# ---------------------------------------------------------------------------
 # Load spaCy model once at startup
-# ---------------------------------------------------------------------------
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
@@ -43,9 +41,7 @@ except OSError:
         "Run: python -m spacy download en_core_web_sm"
     )
 
-# ---------------------------------------------------------------------------
 # App setup
-# ---------------------------------------------------------------------------
 app = FastAPI(
     title="ProseGuard API",
     description="Local, explainable AI-generated essay detection. No LLM-as-judge.",
@@ -61,9 +57,7 @@ app.add_middleware(
 )
 
 
-# ---------------------------------------------------------------------------
 # Request / Response schemas
-# ---------------------------------------------------------------------------
 class AnalyzeRequest(BaseModel):
     text: Annotated[str, Field(min_length=50, max_length=20_000)]
 
@@ -89,9 +83,7 @@ class AnalyzeResponse(BaseModel):
     sentence_count: int
 
 
-# ---------------------------------------------------------------------------
 # Endpoints
-# ---------------------------------------------------------------------------
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "model": "en_core_web_sm"}

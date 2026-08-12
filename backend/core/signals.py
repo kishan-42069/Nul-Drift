@@ -32,9 +32,7 @@ from .baselines import HUMAN_BASELINES
 import numpy as np
 import spacy
 
-# ---------------------------------------------------------------------------
 # Transition / discourse connector word list (lower-cased)
-# ---------------------------------------------------------------------------
 _DISCOURSE_CONNECTORS: frozenset[str] = frozenset(
     {
         "furthermore", "moreover", "however", "nevertheless", "consequently",
@@ -49,16 +47,12 @@ _DISCOURSE_CONNECTORS: frozenset[str] = frozenset(
 )
 
 
-# ---------------------------------------------------------------------------
 # Helper: get sentences as lists of tokens (filtering blanks)
-# ---------------------------------------------------------------------------
 def _sentences(doc: spacy.tokens.Doc) -> List[spacy.tokens.Span]:
     return [sent for sent in doc.sents if len(sent.text.strip()) > 0]
 
 
-# ===========================================================================
 # PRIMARY SIGNALS
-# ===========================================================================
 
 def sentence_length_variance(doc: spacy.tokens.Doc) -> float:
     """
