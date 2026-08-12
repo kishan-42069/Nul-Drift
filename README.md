@@ -46,7 +46,7 @@ pip install -e .
 
 ### 2. Running the Interactive CLI
 
-Simply type `nuldrift` in your terminal to launch the interactive prompt:
+Simply type `nuldrift` in  your terminal to launch the interactive prompt:
 
 ```bash
 nuldrift
@@ -79,3 +79,5 @@ nuldrift analyze path/to/essay.txt --json
 
 ## Contributing
 Any changes, updates, or improvements are always welcome! Feel free to open an issue or submit a pull request if you'd like to contribute.
+### Contribution
+Contributed by Keerthana
