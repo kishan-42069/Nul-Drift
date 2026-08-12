@@ -6,7 +6,7 @@
 
 ---
 
-**🌐 Website URL:** [ ] *(Link will be added upon deployment)*
+**🌐 Website URL:** [ ] *https://nul-drift-app-67.web.app/*
 
 ## Overview
 Nul!Drift detects AI writing by measuring statistical smoothness. Human writers are rhythmically unpredictable; AI optimizes for predictable token distributions. We use 7 local, concrete statistical signals on passages to find these differences.
