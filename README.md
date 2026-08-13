@@ -74,3 +74,10 @@ nuldrift analyze --text "Your text here..."
 ```bash
 nuldrift analyze path/to/essay.txt --json
 ```
+
+---
+
+## Contributing
+Any changes, updates, or improvements are always welcome! Feel free to open an issue or submit a pull request if you'd like to contribute.
+##Contribution
+this project welcomes contributions and improvements from developers.
